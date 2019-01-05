@@ -60,29 +60,58 @@ impl Lexer {
         }
     }
 
+    fn peek_char(&self) -> Option<char> {
+        if self.read_position >= self.input.len() {
+            None
+        } else if let Some(cs) = self.input.get(self.read_position..=self.read_position) {
+            let c = cs.chars().next().unwrap();
+            Some(c)
+        } else {
+            panic!("read_position exceeds input length.")
+        }
+    }
+
     pub fn next_token(&mut self) -> Token {
         self.skip_whitespace();
 
         let token = match self.ch {
-            Some('=') => Token::ASSIGN,
-            Some(';') => Token::SEMICOLON,
-            Some('(') => Token::LPAREN,
-            Some(')') => Token::RPAREN,
-            Some(',') => Token::COMMA,
-            Some('+') => Token::PLUS,
-            Some('{') => Token::LBRACE,
-            Some('}') => Token::RBRACE,
+            Some('=') => match self.peek_char() {
+                Some(c) if c == '=' => {
+                    self.read_char();
+                    Token::Eq
+                }
+                _ => Token::Assign,
+            },
+            Some(';') => Token::Semicolon,
+            Some('(') => Token::LParen,
+            Some(')') => Token::RParen,
+            Some(',') => Token::Comma,
+            Some('+') => Token::Plus,
+            Some('-') => Token::Minus,
+            Some('!') => match self.peek_char() {
+                Some(c) if c == '=' => {
+                    self.read_char();
+                    Token::NotEq
+                }
+                _ => Token::Bang,
+            },
+            Some('*') => Token::Asterisk,
+            Some('/') => Token::Slash,
+            Some('<') => Token::Lt,
+            Some('>') => Token::Gt,
+            Some('{') => Token::LBrace,
+            Some('}') => Token::RBrace,
             Some(c) => {
                 if is_letter(c) {
                     let ident = self.read_identifier();
-                    return lookup_ident(ident).unwrap_or_else(|| Token::IDENT(ident.to_string()));
+                    return lookup_ident(ident).unwrap_or_else(|| Token::Ident(ident.to_string()));
                 } else if is_digit(c) {
-                    return Token::INT(self.read_number().to_string());
+                    return Token::Int(self.read_number().to_string());
                 } else {
-                    Token::ILLEGAL
+                    Token::Illegal
                 }
             }
-            _ => Token::EOF,
+            _ => Token::Eof,
         };
 
         self.read_char();
@@ -129,7 +158,7 @@ impl Iterator for Lexer {
 
     fn next(&mut self) -> Option<<Self as Iterator>::Item> {
         match self.next_token() {
-            Token::EOF => None,
+            Token::Eof => None,
             token => Some(token),
         }
     }
@@ -152,8 +181,13 @@ fn is_digit(c: char) -> bool {
 lazy_static! {
     static ref KEYWORDS: HashMap<&'static str, Token> = {
         let mut m = HashMap::new();
-        m.insert("fn", Token::FUNCTION);
-        m.insert("let", Token::LET);
+        m.insert("fn", Token::Function);
+        m.insert("let", Token::Let);
+        m.insert("if", Token::If);
+        m.insert("else", Token::Else);
+        m.insert("return", Token::Return);
+        m.insert("true", Token::True);
+        m.insert("false", Token::False);
         m
     };
 }

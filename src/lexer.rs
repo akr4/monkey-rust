@@ -20,10 +20,17 @@ fn escape(s: &str) -> String {
 #[cfg(test)]
 impl fmt::Debug for Lexer {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        let input = self.input.get(self.position..self.input.len().min(self.position + 10));
-        write!(f, r#"Lexer {{ input: "...{}...", position: {:?}, read_position: {:?}, ch: {:?} }}"#,
-               input.map(|x| escape(x)).unwrap_or("".to_string()),
-               self.position, self.read_position, self.ch)
+        let input = self
+            .input
+            .get(self.position..self.input.len().min(self.position + 10));
+        write!(
+            f,
+            r#"Lexer {{ input: "...{}...", position: {:?}, read_position: {:?}, ch: {:?} }}"#,
+            input.map(|x| escape(x)).unwrap_or("".to_string()),
+            self.position,
+            self.read_position,
+            self.ch
+        )
     }
 }
 
@@ -69,16 +76,14 @@ impl Lexer {
             Some(c) => {
                 if is_letter(c) {
                     let ident = self.read_identifier();
-                    return lookup_ident(ident).unwrap_or_else(||
-                        Token::IDENT(ident.to_string())
-                    )
+                    return lookup_ident(ident).unwrap_or_else(|| Token::IDENT(ident.to_string()));
                 } else if is_digit(c) {
-                    return Token::INT(self.read_number().to_string())
+                    return Token::INT(self.read_number().to_string());
                 } else {
                     Token::ILLEGAL
                 }
             }
-            _ => Token::EOF
+            _ => Token::EOF,
         };
 
         self.read_char();

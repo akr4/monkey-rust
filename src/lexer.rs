@@ -120,6 +120,17 @@ impl Lexer {
     }
 }
 
+impl Iterator for Lexer {
+    type Item = Token;
+
+    fn next(&mut self) -> Option<<Self as Iterator>::Item> {
+        match self.next_token() {
+            Token::EOF => None,
+            token => Some(token),
+        }
+    }
+}
+
 fn is_letter(c: char) -> bool {
     match c {
         'a'..='z' | 'A'..='Z' | '_' => true,

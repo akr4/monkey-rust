@@ -54,12 +54,7 @@ fn test_next_token() {
         Token::EOF,
     ];
 
-    let mut lexer = Lexer::new(input);
-
-    for t in tests.iter() {
-        println!("{:?}", lexer);
-        let token = lexer.next_token();
-        println!("{:?}", token);
-        assert_eq!(token, *t);
+    for (actual, expected) in Lexer::new(input).zip(tests.iter()) {
+        assert_eq!(actual, *expected);
     }
 }

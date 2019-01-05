@@ -6,7 +6,7 @@ This is my project to read the book and study Rust.
 
 ## Progress
 
-I'm on the section 1.4.
+I'm on the section 1.5.
 
 ## License
 

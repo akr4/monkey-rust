@@ -1,0 +1,8 @@
+[package]
+name = "monkey-rust"
+version = "0.1.0"
+authors = ["Akira Ueda <ue@gol.com>"]
+edition = "2018"
+
+[dependencies]
+lazy_static = "1.2.0"

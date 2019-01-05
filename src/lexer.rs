@@ -158,6 +158,6 @@ lazy_static! {
     };
 }
 
-pub fn lookup_ident(ident: &str) -> Option<Token> {
+fn lookup_ident(ident: &str) -> Option<Token> {
     KEYWORDS.get(ident).cloned()
 }

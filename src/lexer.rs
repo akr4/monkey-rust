@@ -50,15 +50,13 @@ impl Lexer {
     fn read_char(&mut self) {
         if self.read_position >= self.input.len() {
             self.ch = None;
+        } else if let Some(cs) = self.input.get(self.read_position..=self.read_position) {
+            let c = cs.chars().next().unwrap();
+            self.ch = Some(c);
+            self.position = self.read_position;
+            self.read_position += 1;
         } else {
-            if let Some(cs) = self.input.get(self.read_position..self.read_position + 1) {
-                let c = cs.chars().next().unwrap();
-                self.ch = Some(c);
-                self.position = self.read_position;
-                self.read_position += 1;
-            } else {
-                panic!("read_position exceeds input length.")
-            }
+            panic!("read_position exceeds input length.")
         }
     }
 
@@ -161,5 +159,5 @@ lazy_static! {
 }
 
 pub fn lookup_ident(ident: &str) -> Option<Token> {
-    KEYWORDS.get(ident).map(|x| x.clone())
+    KEYWORDS.get(ident).cloned()
 }
